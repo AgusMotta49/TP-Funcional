@@ -1,0 +1,47 @@
+--1.a  Dado un viajero su nombre --> se usa nombreViajero
+ghci> nombreViajero alma
+"Alma"
+
+--1.b  Dado un viaje su nombre --> se usa destino
+ghci> destino vamosKorea
+"Visita a Korea "
+
+--1.c. Dado un recuerdo, su nombre y el lugar de donde proviene
+ghci> nombreYLugar eclipse
+("Vi el eclipse lunar","esquina de plaza")
+--------------------------------------------------------------------------------------------------------------------------
+--2. Definir una función que permita obtener los recuerdos y los viajes de un viajero.
+ghci> recuerdosYlugares alma
+([Recuerdo {nombreRecuerdo = "Fiesta fin de anioo", lugar = "UNDAV"},Recuerdo {nombreRecuerdo = "LLegada de Bolasaurio", lugar = " mi casa"},Recuerdo {nombreRecuerdo = "Casamiento hermana", lugar = "New York"},Recuerdo {nombreRecuerdo = "Vi el eclipse lunar", lugar = "esquina de plaza"}],[Futurama,Visita a Korea ])
+
+-------------------------------------------------------------------------------------------------------------------------
+--3. Hacer una función que permita saber si un viaje es interesante. Un viaje es interesante si:
+   -- a. Si el destino del viaje es el lejano oeste
+   -- b. Si es un viaje al pasado y el viajero se puede traer más de 5 recuerdos
+   -- c. Todos los viajes al futuro son interesantes.
+
+ghci> esViajeInteresante vamosKorea
+True
+ghci> esViajeInteresante vamosAlpasado
+False
+ghci> esViajeInteresante viajeLejanoOeste
+True
+-------------------------------------------------------------------------------------------------------------------------
+--4. Hacer una función que dada una lista de viajes, permita mostrar los nombres y los años de todos los viajes que son interesantes.
+
+ghci> nombresYAniosViajesInteresantes listaDeViajes
+[("Futurama",3000),("Visita a Korea ",3500),("caida muralla china ",2000)]
+
+-------------------------------------------------------------------------------------------------------------------------
+--5. Hacer una función que dada una lista de viajes, un año inicio y un año fin, se pueda obtener cuáles son los nombres y el año de todos los viajes entre los años que están en el rango pasado por parámetro.
+
+ghci> viajesEnRango 1000 2500 listaDeViajes
+[("caida muralla china ",2000)]
+
+ghci> viajesEnRango 1000 4500 listaDeViajes 
+[("Futurama",3000),("Visita a Korea ",3500),("caida muralla china ",2000)]
+
+ghci> viajesEnRango 4000 5000 listaDeViajes 
+[]
+
+-------------------------------------------------------------------------------------------------------------------------
