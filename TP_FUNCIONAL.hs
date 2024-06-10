@@ -18,13 +18,13 @@ Su nombre del recuerdo, el lugar de donde proviene-}
 -- b. Dado un viaje, su nombre
 --c. Dado un recuerdo, su nombre y el lugar de donde proviene 
 
-data Viajero = Viajero { nombreViajero::String, edad:: Int, recuerdos::[Recuerdo], viajes::[Viaje]} 
+data Viajero = Viajero { nombreViajero::String, edad:: Int, recuerdos::[Recuerdo], viajes::[Viaje]}
 data Recuerdo = Recuerdo { nombreRecuerdo::String, lugar::String } deriving Show
 
 data Viaje =
     ViajePasado { destino::String, transformaciones::[Viajero->Viajero], recuerdosViaje::[Recuerdo], anioDestino:: Int}
     | ViajeFuturo { destino:: String, transformaciones::[Viajero->Viajero], cantidadAniosLuz::Int, anioDestino::Int}
-    
+
 
 -- RECUERDOS
 burbulina = Recuerdo {  nombreRecuerdo="cumpleanios de Burbulina", lugar="playland"}
@@ -43,9 +43,10 @@ mora= Viajero {nombreViajero ="Mora", edad =18, recuerdos = [fiesta,burbulina,bo
 --VIAJES
 
 viajeFuturama = ViajeFuturo "Futurama" [cambiarNombre,aumentarEdad]  20 3000
-viajeLejanoOeste = ViajePasado "Lejano Oeste" [perderRecuerdos]  [fiesta] 1957
-vamosChina= ViajePasado {destino = "caida muralla china ", transformaciones =[disminuirEdad,cambiarNombre,aumentarEdad,aumentarEdad], recuerdosViaje = [ burbulina,bolasaurio,casamiento,fiesta,eclipse], anioDestino =2000}  
-vamosKorea = ViajeFuturo {destino = "Visita a Korea ", transformaciones =[cambiarNombre], cantidadAniosLuz = 80, anioDestino =3500}
+viajeLejanoOeste = ViajePasado "Lejano Oeste" []  [fiesta] 1957
+vamosChina= ViajePasado {destino = "caida muralla china ", transformaciones =[disminuirEdad,cambiarNombre,aumentarEdad,aumentarEdad], recuerdosViaje = [ burbulina,bolasaurio,casamiento,fiesta,eclipse], anioDestino =2000}
+vamosAlpasado= ViajePasado {destino = "ir 20 años atras ", transformaciones =[disminuirEdad], recuerdosViaje = [bolasaurio,eclipse], anioDestino =2000}
+vamosKorea = ViajeFuturo {destino = "Visita a Korea ", transformaciones =[cambiarNombre],  cantidadAniosLuz = 80, anioDestino =3500}
 
  --Funciones=transformaciones  
 cambiarNombre (Viajero _ edad recuerdos viajes)= Viajero "Pikachu" edad recuerdos viajes
@@ -56,7 +57,7 @@ perderRecuerdos (Viajero nombre edad _ viajes) = Viajero nombre edad [] viajes
 instance Show Viajero where
     show (Viajero nombre edad recuerdos _ ) = nombre ++ " "++ show edad ++" "++  show recuerdos
 --MOSTRAR VIAJE 
-instance Show Viaje where 
+instance Show Viaje where
     show (ViajeFuturo destino _ _ _) = destino
     show (ViajePasado destino _ _ _) = destino
 
@@ -64,7 +65,7 @@ instance Show Viaje where
 --1.b  Dado un viaje su nombre --> se usa destino
 --1.c. Dado un recuerdo, su nombre y el lugar de donde proviene
 nombreYLugar (Recuerdo nombreRecuerdo lugar ) =  (nombreRecuerdo,lugar )
- 
+
 --2. Definir una función que permita obtener los recuerdos y los viajes de un viajero.
 
 recuerdosYlugares (Viajero _ _ recuerdos viajes) = (recuerdos, viajes)
@@ -73,25 +74,29 @@ recuerdosYlugares (Viajero _ _ recuerdos viajes) = (recuerdos, viajes)
    -- a. Si el destino del viaje es el lejano oeste
    -- b. Si es un viaje al pasado y el viajero se puede traer más de 5 recuerdos
     --c. Todos los viajes al futuro son interesantes.
-esViajeInteresante (ViajePasado destino _ recuerdos _)= length recuerdos>= 5 || destino =="lejano oeste"
-esViajeInteresante (ViajeFuturo _ _ _ _)=True
+--esViajeInteresante (ViajePasado destino _ recuerdos _)= length recuerdos>= 5 || destino =="lejano oeste"
+--esViajeInteresante (ViajeFuturo _ _ _ _)=True
+
+esViajeInteresante (ViajeFuturo {})= True
+esViajeInteresante (ViajePasado "Lejano Oeste" _ _ _) =  True
+esViajeInteresante (ViajePasado _ _ recuerdos _) = length recuerdos>= 5
+
 
 
 --4. Hacer una función que dada una lista de viajes, permita mostrar los nombres y los años de todos los viajes que son interesantes.
-listaDeViajes = [viajeFuturama,vamosKorea,vamosChina ] 
-listaDeViajes2 = [vamosKorea ] 
-listaDeViajes3 = [viajeLejanoOeste ] 
+listaDeViajes = [viajeFuturama,vamosKorea,vamosChina ]
+listaDeViajes2 = [vamosKorea ]
+listaDeViajes3 = [viajeLejanoOeste ]
 
-viajesInteresantes = filter esViajeInteresante
-nombresYAñosViajesInteresantes viajes = [(destino viaje, anioDestino viaje) | viaje <- viajes]
-
-
+nombresYAniosViajes = map (\ viaje -> (destino viaje, anioDestino viaje))
+nombresYAniosViajesInteresantes  viajes = nombresYAniosViajes (filter esViajeInteresante viajes)
+--nombresYAñosViajesInteresantes   = nombresYAñosViajes.esViajeInteresante
 
 
 --5. Hacer una función que dada una lista de viajes, un año inicio y un año fin, se pueda obtener cuáles son los nombres y el año de 
 --todos los viajes entre los años que están en el rango pasado por parámetro.
-estaEnRango  inicio fin viaje = anioDestino viaje <= fin  && anioDestino viaje >= inicio 
-viajesEnRango inicio fin viajes = map (\ viaje -> (destino viaje, anioDestino viaje)) (filter (estaEnRango inicio fin) viajes)
+estaEnRango  inicio fin viaje = anioDestino viaje <= fin  && anioDestino viaje >= inicio
+viajesEnRango inicio fin viajes = nombresYAniosViajes (filter (estaEnRango inicio fin) viajes)
 
 --6. Definir una función que permita hacer que el viajero realice una lista de viajes, se le apliquen las transformaciones
 -- necesarias y obtenga 
