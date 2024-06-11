@@ -54,6 +54,12 @@ ghci> viarjarMuchos alma listaDeViajes2
 Pikachu 18 [Recuerdo {nombreRecuerdo = "Fiesta fin de anioo", lugar = "UNDAV"},Recuerdo {nombreRecuerdo = "LLegada de Bolasaurio", lugar = " mi casa"},
 Recuerdo {nombreRecuerdo = "Vi el eclipse lunar", lugar = "esquina de plaza"}] [Futurama,Visita a Korea ,Visita a Korea ,ir 20 años atras ]
 
+--Modificacion:
+ghci> viarjarMuchos alma listaDeViajes
+Pikachu 28 [Recuerdo {nombreRecuerdo = "cumpleanios de Burbulina", lugar = "playland"},Recuerdo {nombreRecuerdo = "LLegada de Bolasaurio", lugar = " mi casa"},
+Recuerdo {nombreRecuerdo = "Casamiento hermana", lugar = "New York"},Recuerdo {nombreRecuerdo = "Fiesta fin de anioo", lugar = "UNDAV"},
+Recuerdo {nombreRecuerdo = "Vi el eclipse lunar", lugar = "esquina de plaza"}] [Futurama,Visita a Korea ,Futurama,Visita a Korea ,ir 20 años atras ,Lejano Oeste,caida muralla china ]
+
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --7. Hacer la función estadística que reciba una función de condición, una función de transformación y una lista. Luego, 
 --usarla para resolver las siguientes consultas:

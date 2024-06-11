@@ -32,7 +32,7 @@ burbulina = Recuerdo {  nombreRecuerdo="cumpleanios de Burbulina", lugar="playla
 fiesta = Recuerdo {nombreRecuerdo= "Fiesta fin de anioo", lugar= "UNDAV"}
 casamiento = Recuerdo {nombreRecuerdo= "Casamiento hermana", lugar= "New York"}
 bolasaurio = Recuerdo {nombreRecuerdo= "LLegada de Bolasaurio", lugar= " mi casa"}
-eclipse = Recuerdo {nombreRecuerdo= "Vi el eclipse lunar", lugar= "esquina de plaza"}
+eclipse = Recuerdo {nombreRecuerdo = "Vi el eclipse lunar", lugar= "esquina de plaza"}
 viaje1957 = Recuerdo {nombreRecuerdo= "Viaje a 1957 ", lugar= "Lejano Oeste"}
 --VIAJEROS
 gonzalez = Viajero { nombreViajero="Claudio", edad =23, recuerdos=[fiesta,burbulina], viajes=[vamosChina]}
@@ -54,6 +54,8 @@ vamosAlpasado= ViajePasado {destino = "ir 20 años atras ", transformaciones =[d
 cambiarNombre (Viajero _ edad recuerdos viajes)= Viajero "Pikachu" edad recuerdos viajes
 aumentarEdad (Viajero nombre edad recuerdos viajes) = Viajero nombre (edad+10) recuerdos viajes
 disminuirEdad (Viajero nombre edad recuerdos viajes) = Viajero nombre (edad-20) recuerdos viajes
+duplicarEdad (Viajero nombre edad recuerdos viajes) = Viajero nombre (edad*2) recuerdos viajes
+nacerDeNuevo (Viajero nombre edad recuerdos viajes) = Viajero nombre (edad - edad) recuerdos viajes
 perderRecuerdos (Viajero nombre edad _ viajes) = Viajero nombre edad [] viajes
 
 
@@ -102,13 +104,10 @@ obtenerRecuerdosViaje (ViajeFuturo {} ) = []
 
 obtenerRecuerdosViajero (Viajero _ _ recuerdos _) = recuerdos
 
-agregarRecuerdosAlViajero (Viajero nombre edad recuerdosViajero viajesViajero ) viaje = Viajero nombre edad (recuerdosViajero ++ obtenerRecuerdosViaje  viaje ) viajesViajero
-agregarViajesAlViajero (Viajero nombre edad recuerdosViajero viajesViajero ) viajes = Viajero nombre edad recuerdosViajero ( viajesViajero ++ viajes)
+actualizarViajesYRecuerdos (Viajero nombre edad recuerdosViajero viajesViajero ) viaje = Viajero nombre edad (recuerdosViajero ++ obtenerRecuerdosViaje viaje) (viajesViajero ++ [viaje])
+viajarA viajero viaje = foldl (\viajero transformacion -> transformacion viajero) (actualizarViajesYRecuerdos viajero viaje) (transformaciones viaje)
 
-viajarA viajero viaje =  foldl  (\viajero transformacion -> transformacion viajero) ( agregarViajesAlViajero (agregarRecuerdosAlViajero viajero viaje ) [viaje]) (transformaciones viaje)
-
-viarjarMuchos viajero viajes = (foldl (\viajero viaje-> viajarA viajero viaje)  viajero) viajes
-
+viarjarMuchos viajero viajes = foldl viajarA viajero viajes
 
 --7. Hacer la función estadística que reciba una función de condición, una función de transformación y una lista. Luego, 
 --usarla para resolver las siguientes consultas:
