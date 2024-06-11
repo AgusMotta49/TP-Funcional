@@ -1,3 +1,4 @@
+
 {-\Desde tiempos inmemoriales los viajes en el tiempo han seducido a muchas personas.
 ¡Hoy los vamos a programar!
 Como cualquier viaje, tenemos a la persona que lo realiza y de ella se conoce:
@@ -35,32 +36,34 @@ eclipse = Recuerdo {nombreRecuerdo= "Vi el eclipse lunar", lugar= "esquina de pl
 viaje1957 = Recuerdo {nombreRecuerdo= "Viaje a 1957 ", lugar= "Lejano Oeste"}
 --VIAJEROS
 gonzalez = Viajero { nombreViajero="Claudio", edad =23, recuerdos=[fiesta,burbulina], viajes=[vamosChina]}
-alma = Viajero "Alma" 28 [fiesta,bolasaurio,casamiento, eclipse] [viajeFuturama,vamosKorea]
+alma = Viajero "Alma" 28 [fiesta] [viajeFuturama,vamosKorea]
 marta= Viajero {nombreViajero ="Marta", edad =88, recuerdos = [fiesta,burbulina,bolasaurio,casamiento, eclipse], viajes = [viajeFuturama,vamosChina]}
 pepe= Viajero {nombreViajero ="Pepe", edad =23, recuerdos = [fiesta,burbulina,bolasaurio,casamiento, eclipse], viajes = [vamosChina,vamosKorea]}
 mora= Viajero {nombreViajero ="Mora", edad =18, recuerdos = [fiesta,burbulina,bolasaurio,casamiento, eclipse], viajes = [vamosKorea]}
 
 --VIAJES
 
-viajeFuturama = ViajeFuturo "Futurama" [cambiarNombre,aumentarEdad]  20 3000
-viajeLejanoOeste = ViajePasado "Lejano Oeste" []  [fiesta] 1957
+viajeFuturama = ViajeFuturo "Futurama" [aumentarEdad,cambiarNombre]  20 3000
+vamosKorea = ViajeFuturo {destino = "Visita a Korea ", transformaciones =[cambiarNombre,aumentarEdad],  cantidadAniosLuz = 80, anioDestino =3500}
+viajeJapon = ViajeFuturo {destino = " Vacaciones en Japon ", transformaciones =[cambiarNombre,aumentarEdad],  cantidadAniosLuz = 80, anioDestino =3500}
+viajeLejanoOeste = ViajePasado "Lejano Oeste" [perderRecuerdos]  [fiesta,eclipse] 1957
 vamosChina= ViajePasado {destino = "caida muralla china ", transformaciones =[disminuirEdad,cambiarNombre,aumentarEdad,aumentarEdad], recuerdosViaje = [ burbulina,bolasaurio,casamiento,fiesta,eclipse], anioDestino =2000}
-vamosAlpasado= ViajePasado {destino = "ir 20 años atras ", transformaciones =[disminuirEdad], recuerdosViaje = [bolasaurio,eclipse], anioDestino =2000}
-vamosKorea = ViajeFuturo {destino = "Visita a Korea ", transformaciones =[cambiarNombre],  cantidadAniosLuz = 80, anioDestino =3500}
+vamosAlpasado= ViajePasado {destino = "ir 20 años atras ", transformaciones =[disminuirEdad], recuerdosViaje = [bolasaurio,eclipse], anioDestino =2004}
 
- --Funciones=transformaciones  
+ --Funciones = transformaciones  
 cambiarNombre (Viajero _ edad recuerdos viajes)= Viajero "Pikachu" edad recuerdos viajes
 aumentarEdad (Viajero nombre edad recuerdos viajes) = Viajero nombre (edad+10) recuerdos viajes
 disminuirEdad (Viajero nombre edad recuerdos viajes) = Viajero nombre (edad-20) recuerdos viajes
 perderRecuerdos (Viajero nombre edad _ viajes) = Viajero nombre edad [] viajes
 
-instance Show Viajero where
-    show (Viajero nombre edad recuerdos _ ) = nombre ++ " "++ show edad ++" "++  show recuerdos
+
 --MOSTRAR VIAJE 
 instance Show Viaje where
     show (ViajeFuturo destino _ _ _) = destino
     show (ViajePasado destino _ _ _) = destino
 
+instance Show Viajero where
+    show (Viajero nombre edad recuerdos viajes ) = nombre ++ " "++ show edad ++" "++  show recuerdos ++ " " ++ show viajes
 --1.a  Dado un viajero su nombre --> se usa nombreViajero
 --1.b  Dado un viaje su nombre --> se usa destino
 --1.c. Dado un recuerdo, su nombre y el lugar de donde proviene
@@ -80,9 +83,9 @@ esViajeInteresante (ViajeFuturo {})= True
 esViajeInteresante (ViajePasado "Lejano Oeste" _ _ _) =  True
 esViajeInteresante (ViajePasado _ _ recuerdos _) = length recuerdos>= 5
 --4. Hacer una función que dada una lista de viajes, permita mostrar los nombres y los años de todos los viajes que son interesantes.
-listaDeViajes = [viajeFuturama,vamosKorea,vamosChina,vamosAlpasado,viajeFuturama,viajeLejanoOeste ]
-listaDeViajes2 = [vamosKorea ]
-listaDeViajes3 = [viajeLejanoOeste ]
+--viajesAlFuturo = [viajeFuturama,vamosKorea ]
+--viajesAlPasado = [vamosAlpasado ,viajeLejanoOeste]
+--viajesConCincoOMasRecuerdos = [ViajePasado ]
 
 nombresYAniosViajes = map (\ viaje -> (destino viaje, anioDestino viaje))
 nombresYAniosViajesInteresantes  viajes = nombresYAniosViajes (filter esViajeInteresante viajes)
@@ -94,10 +97,17 @@ viajesEnRango inicio fin viajes = nombresYAniosViajes (filter (estaEnRango inici
 --6. Definir una función que permita hacer que el viajero realice una lista de viajes, se le apliquen las transformaciones
 -- necesarias y obtenga los recuerdos.
 
-misTransformaciones (ViajePasado _ transformaciones _ _) = transformaciones
-misTransformaciones (ViajeFuturo _ transformaciones _ _) = transformaciones
-viajarA viajero viaje = foldl  (\viajero transformacion -> transformacion viajero) viajero (misTransformaciones viaje)
-viarjarMuchos viajero viajes = ( recuerdos.(foldl (\viajero viaje-> viajarA viajero viaje)  viajero)) viajes
+obtenerRecuerdosViaje (ViajePasado _ _ recuerdosViaje _  ) = recuerdosViaje
+obtenerRecuerdosViaje (ViajeFuturo {} ) = []
+
+obtenerRecuerdosViajero (Viajero _ _ recuerdos _) = recuerdos
+
+agregarRecuerdosAlViajero (Viajero nombre edad recuerdosViajero viajesViajero ) viaje = Viajero nombre edad (recuerdosViajero ++ obtenerRecuerdosViaje  viaje ) viajesViajero
+agregarViajesAlViajero (Viajero nombre edad recuerdosViajero viajesViajero ) viajes = Viajero nombre edad recuerdosViajero ( viajesViajero ++ viajes)
+
+viajarA viajero viaje =  foldl  (\viajero transformacion -> transformacion viajero) ( agregarViajesAlViajero (agregarRecuerdosAlViajero viajero viaje ) [viaje]) (transformaciones viaje)
+
+viarjarMuchos viajero viajes = (foldl (\viajero viaje-> viajarA viajero viaje)  viajero) viajes
 
 
 --7. Hacer la función estadística que reciba una función de condición, una función de transformación y una lista. Luego, 
@@ -106,20 +116,14 @@ viarjarMuchos viajero viajes = ( recuerdos.(foldl (\viajero viaje-> viajarA viaj
     --b. Dada una lista de viajes, obtener la suma de todos los años luz que suman.Tener en cuenta que los viajes al pasado no suman años luz.
     --c. Dada una lista, obtener los nombres de todos los viajes. 
 --Nota: sólo se puede hacer la función estadística y usar la misma en forma de consulta en los puntos a, b y c. No se pueden usar funciones
-
-
 estadistica condicion transformacion lista = transformacion (filter condicion lista)
-
-
 --7.a estadistica ((> 3) . length . transformaciones) (map destino) listaDeViajes
-
---7.b estadistica (esViajeFuturo)  (sum . map cantidadAniosLuz) listaDeViajes
-destino:: String, transformaciones::[Viajero->Viajero], cantidadAniosLuz::Int, anioDestino::Int
+--7.b estadistica (esViajeFuturo ) (sum . map cantidadAniosLuz) listaDeViajes
 --7.c estadistica (\_ -> True) (map destino) listaDeViajes    
+esViajeFuturo (ViajePasado {}) = False
+esViajeFuturo (ViajeFuturo {}) = True
 
-
---7.a estadistica ((> 3) . length . transformaciones) (map destino) listaDeViajes
-
---7.b estadistica (\  -> case v of ViajeFuturo _ _ _ _  -> True ; _ -> False)  (sum . map cantidadAniosLuz) listaDeViajes
-
---7.c estadistica (\_ -> True) (map destino) listaDeViajes    
+viajesAlFuturo = [viajeFuturama,vamosKorea ]
+viajesAlPasado = [vamosAlpasado ,viajeLejanoOeste]
+viajesConCincoOMasRecuerdos = [vamosChina ]
+listaDeViajes = [viajeFuturama,vamosKorea,vamosAlpasado ,viajeLejanoOeste,vamosChina ]
